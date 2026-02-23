@@ -13,7 +13,7 @@ body {
     top: 0;
     left: 0;
     padding-top: 60px;
-    background-color: rgb(0, 0, 0);
+    background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgb(138, 194, 201) 0%, rgb(140, 166, 200) 51.2%, rgb(106, 176, 230) 100.1% );
     overflow-x: hidden;
     z-index: 1;
 }
@@ -24,7 +24,7 @@ body {
     font-size: 30px;
     display: block;
     align-items: center;
-    color:white;
+    color: #40476c;
     cursor: pointer;
     transition: all 0.25s ease;
 }
@@ -35,7 +35,7 @@ body {
 }
 
 .sidenav a.active {
-    color: goldenrod;
+    transform: translateX(16px);
 }
 
 .sidenav a:hover {
