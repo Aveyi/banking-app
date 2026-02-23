@@ -5,11 +5,11 @@ function Navbar() {
     <div className="sidenav">
       <nav>
             <ul>
-              <li><NavLink to="/dashboard">Dashboard</NavLink></li>
-              <li><NavLink to="/accounts">Accounts</NavLink></li>
-              <li><NavLink to="/transfer">Transfer</NavLink></li>
-              <li><NavLink to="/analytics">Analytics</NavLink></li>
-              <li><NavLink to="/profile">Profile</NavLink></li>
+              <li><NavLink to="/dashboard">Главная</NavLink></li>
+              <li><NavLink to="/accounts">Счета</NavLink></li>
+              <li><NavLink to="/transfer">Переводы</NavLink></li>
+              <li><NavLink to="/analytics">Аналитика</NavLink></li>
+              <li><NavLink to="/profile">Профиль</NavLink></li>
             </ul>
       </nav>
     </div>
