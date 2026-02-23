@@ -1,19 +1,18 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function Navbar() {
   return (
-    <nav>
-      <h2>Banking App</h2>
-
-      <ul>
-        <li><Link to="/register">Register</Link></li>
-        <li><Link to="/dashboard">Dashboard</Link></li>
-        <li><Link to="/accounts">Accounts</Link></li>
-        <li><Link to="/transfer">Transfer</Link></li>
-        <li><Link to="/analytics">Analytics</Link></li>
-        <li><Link to="/profile">Profile</Link></li>
-      </ul>
-    </nav>
+    <div className="sidenav">
+      <nav>
+            <ul>
+              <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+              <li><NavLink to="/accounts">Accounts</NavLink></li>
+              <li><NavLink to="/transfer">Transfer</NavLink></li>
+              <li><NavLink to="/analytics">Analytics</NavLink></li>
+              <li><NavLink to="/profile">Profile</NavLink></li>
+            </ul>
+      </nav>
+    </div>
   );
 }
 
