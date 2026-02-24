@@ -26,7 +26,7 @@ function DashboardPage() {
         </div>
 
         <div className="widget clickable" onClick={() => navigate("/transfer")}>
-          <h3>Сделать перевод</h3>
+          <h3>Платежи</h3>
           <p>Перейти к переводам →</p>
         </div>
 
