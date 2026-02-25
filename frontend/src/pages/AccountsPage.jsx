@@ -27,15 +27,15 @@ function AccountsPage() {
       {/* Открытые счета */}
       <div className="dashboard-grid">
         <div className="widget">
-          <h3>Основной счет</h3>
+          <h3>Вклад 1</h3>
           <p className="widget-value">245 000 ₽</p>
-          <p>Доходность: -8%</p>
+          <p>Доходность: 8%</p>
         </div>
 
         <div className="widget">
-          <h3>Накопительный счет</h3>
+          <h3>Вклад 2</h3>
           <p className="widget-value">80 500 ₽</p>
-          <p>Доходность: -7%</p>
+          <p>Доходность: 7%</p>
         </div>
       </div>
 

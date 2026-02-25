@@ -19,7 +19,7 @@ body {
 
     padding-top: 40px;
 
-    background: rgba(159, 64, 64, 0.35); /* прозрачный фон */
+    background: rgba(64, 120, 159, 0.35); /* прозрачный фон */
     backdrop-filter: blur(12px); /* размытие */
     -webkit-backdrop-filter: blur(12px);
 
@@ -197,7 +197,7 @@ body {
 .login-btn {
     width: 100%;
     height: 52px;
-    background: rgba(159, 64, 64, 0.35);
+    background: rgba(64, 120, 159, 0.35);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: none;
@@ -213,7 +213,7 @@ body {
 }
 
 .login-btn:hover {
-    background: rgba(159, 64, 64, 0.529);
+    background: rgba(64, 120, 159, 0.5);
 }
 
 .login-btn:active {
@@ -261,7 +261,7 @@ body {
 
 .dashboard {
     padding: 30px;
-    color: #976c6c;
+    color: #6c8497;
 }
 
 .dashboard-title {
@@ -280,7 +280,7 @@ body {
     padding: 24px;
     border-radius: 18px;
 
-    background: rgba(159, 64, 64, 0.15);
+    background: rgba(64, 120, 159, 0.18);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 
@@ -308,7 +308,7 @@ body {
     padding: 24px;
     border-radius: 18px;
 
-    background: rgba(159, 64, 64, 0.15);
+    background: rgba(64, 120, 159, 0.18);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 
@@ -347,7 +347,7 @@ body {
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.28);
     background: rgba(255, 255, 255, 0.248);
-    color: #976c6c;
+    color: #6c8497;
     font-size: 16px;
 }
 
