@@ -365,3 +365,42 @@ body {
     margin-bottom: 20px;
     font-size: 18px;
 }
+
+/* Переводы */
+
+.transfer-widget {
+    width: 100%;
+    max-width: 720px;
+    padding: 32px;
+}
+
+.transfer-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.transfer-switch {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.transfer-switch button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+
+    background: rgba(64, 120, 159, 0.18);
+    backdrop-filter: blur(10px);
+
+    color: #6c8497;
+    transition: 0.2s;
+}
+
+.transfer-switch button.active {
+    background: rgba(64, 120, 159, 0.45);
+    color: white;
+}
