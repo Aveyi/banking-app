@@ -1,6 +1,6 @@
 body {
     min-height: 100vh;
-    background-image: url("/BG.jpg");
+    background-image: url("/BG1.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -108,12 +108,12 @@ body {
 .login-header h2 {
     font-size: 1.875rem;
     font-weight: 700;
-    color: black;
+    color: #bfd3e4;
     margin-bottom: 8px;
 }
 
 .login-header p {
-    color: black;
+    color: #bfd3e4;
     font-size: 1.475rem;
 }
 
@@ -229,19 +229,19 @@ body {
 }
 
 .signup-link p {
-    color: #64748b;
+    color: rgb(255, 255, 255);
     font-size: 0.875rem;
 }
 
 .signup-link a {
-    color: black;
+    color: #bfd3e4;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s ease;
 }
 
 .signup-link a:hover {
-    color: #313131;
+    color: #9dc6ea;
 }
 
 @media (max-width: 480px) {
@@ -265,7 +265,7 @@ body {
 
 .dashboard {
     padding: 30px;
-    color: #6c8497;
+    color: #bfd3e4;
 }
 
 .dashboard-title {
@@ -283,7 +283,6 @@ body {
 .widget {
     padding: 24px;
     border-radius: 18px;
-
     background: rgba(64, 120, 159, 0.18);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -351,7 +350,7 @@ body {
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.28);
     background: rgba(255, 255, 255, 0.248);
-    color: #6c8497;
+    color: #bfd3e4;
     font-size: 16px;
 }
 
@@ -400,7 +399,7 @@ body {
     background: rgba(64, 120, 159, 0.18);
     backdrop-filter: blur(10px);
 
-    color: #6c8497;
+    color: #bfd3e4;
     transition: 0.2s;
 }
 

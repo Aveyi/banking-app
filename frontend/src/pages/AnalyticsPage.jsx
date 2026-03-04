@@ -22,6 +22,46 @@ ChartJS.register(
   Legend
 );
 
+const doughnutOptions = {
+  plugins: {
+    legend: {
+      labels: {
+        color: "#bfd3e4"
+      }
+    }
+  }
+};
+
+const chartOptions = {
+  plugins: {
+    legend: {
+      labels: {
+        color: "#bfd3e4"
+      }
+    }
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: "#bfd3e4"
+      },
+      grid: {
+        color: "rgba(255, 255, 255, 0.35)"
+      }
+    },
+    y: {
+      ticks: {
+        color: "#bfd3e4"
+      },
+      grid: {
+        color: "rgba(255,255,255,0.35)"
+      }
+    }
+  }
+};
+
+
+
 function AnalyticsPage() {
   const income = 85000;
   const expenses = 42800;
@@ -55,7 +95,7 @@ function AnalyticsPage() {
     {
       label: "Доходы",
       data: [20000, 15000, 30000, 20000],
-      borderColor: "rgba(64,120,159,0.9)",
+      borderColor: "rgba(72, 159, 64, 0.6)",
       backgroundColor: "rgba(64,120,159,0.2)",
       tension: 0.4
     }
@@ -83,12 +123,12 @@ function AnalyticsPage() {
       <div className="analytics-grid">
         <div className="widget">
           <h3>Расходы по категориям</h3>
-          <Doughnut data={categoryData} />
+          <Doughnut data={categoryData} options={doughnutOptions}/>
         </div>
 
         <div className="widget">
           <h3>Динамика за месяц</h3>
-          <Line data={monthlyData} />
+          <Line data={monthlyData} options={chartOptions}/>
         </div>
       </div>
 
