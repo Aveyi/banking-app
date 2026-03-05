@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'deposits',
     'transactions',
     'accounts',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
