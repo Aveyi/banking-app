@@ -171,18 +171,10 @@ body {
 .error-message {
     display: block;
     color: #ef4444;
-    font-size: 0.75rem;
+    font-size: 1rem;
     font-weight: 500;
     margin-top: 4px;
     margin-left: 4px;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: all 0.2s ease;
-}
-
-.error-message.show {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .form-group.error .input-wrapper input {
