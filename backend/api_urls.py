@@ -8,9 +8,9 @@ from transactions.views import TransactionViewSet
 router = DefaultRouter()
 
 router.register(r'users', UserViewSet)
-router.register(r'accounts', AccountViewSet)
-router.register(r'deposits', DepositViewSet)
-router.register(r'transactions', TransactionViewSet)
+router.register(r'accounts', AccountViewSet, basename='accounts')
+router.register(r'deposits', DepositViewSet, basename='deposits')
+router.register(r'transactions', TransactionViewSet, basename='transactions')
 
 urlpatterns = router.urls + [
     path('register/', RegisterView.as_view(), name='register'),
