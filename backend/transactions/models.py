@@ -6,9 +6,17 @@ class Transaction(models.Model):
         ('deposit', 'Deposit'),
         ('withdrawal', 'Withdrawal'),
     ]
+    CATEGORY_TYPES = [
+        ('food', 'Еда'),
+        ('transport', 'Транспорт'),
+        ('entertainment', 'Развлечения'),
+        ('subscriptions', 'Подписки'),
+        ('other', 'Другое'),
+    ]
 
     from_account = models.ForeignKey('accounts.Account', null=True, blank=True, on_delete=models.CASCADE, related_name='outgoing_transactions')
     to_account = models.ForeignKey('accounts.Account', null=True, blank=True, on_delete=models.CASCADE, related_name='incoming_transactions')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    category = models.CharField(max_length=20, choices=CATEGORY_TYPES, default = 'other')
