@@ -5,4 +5,4 @@ class DepositSerializer(serializers.ModelSerializer):
     class Meta:
         model = Deposit
         fields = '__all__'
-        
+        read_only_fields = ['user', 'created_at']

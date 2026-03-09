@@ -49,7 +49,7 @@ function ProfilePage() {
     return <div className="dashboard"><p>{error}</p></div>;
   }
   
-  async function handleSubmit(e) {
+  async function handleClick(e) {
     e.preventDefault();
     logout();
     navigate('/');
@@ -58,7 +58,6 @@ function ProfilePage() {
   return (
     <div className="dashboard">
       <h1 className="dashboard-title">Профиль</h1>
-      <form className="profile-form" onSubmit={handleSubmit}>
         <div className="profile-container">
         <div className="widget profile-card">
           <div className="profile-header">
@@ -87,11 +86,10 @@ function ProfilePage() {
 
           <div className="profile-actions">
             <button className="login-btn">Изменить данные</button>
-            <button type="submit" className="logout-btn">Выйти</button>
+            <button onClick={handleClick} className="logout-btn">Выйти</button>
           </div>
         </div>
       </div>
-      </form>
     </div>
   );
 }
