@@ -1,18 +1,29 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../api/auth";
 
 function ProfilePage() {
+
+  const navigate = useNavigate();
+
   const [user] = useState({
     name: "Иван Петров",
     email: "ivan@email.com",
     phone: "+7 999 123 45 67",
     joined: "Март 2024"
   });
+  
+  async function handleSubmit(e) {
+    e.preventDefault();
+    logout();
+    navigate('/');
+  }
 
   return (
     <div className="dashboard">
       <h1 className="dashboard-title">Профиль</h1>
-
-      <div className="profile-container">
+      <form className="profile-form" onSubmit={handleSubmit}>
+        <div className="profile-container">
         <div className="widget profile-card">
           <div className="profile-header">
             <div className="avatar">
@@ -40,10 +51,11 @@ function ProfilePage() {
 
           <div className="profile-actions">
             <button className="login-btn">Изменить данные</button>
-            <button className="logout-btn">Выйти</button>
+            <button type="submit" className="logout-btn">Выйти</button>
           </div>
         </div>
       </div>
+      </form>
     </div>
   );
 }

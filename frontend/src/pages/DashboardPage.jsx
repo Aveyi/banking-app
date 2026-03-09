@@ -1,7 +1,57 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../api/axios"
 
 function DashboardPage() {
   const navigate = useNavigate();
+
+  const [balance, setBalance] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [accountsRes, TransactionsRes] = await Promise.all([
+          api.get('/accounts/'),
+          api.get('/transactions/'),
+        ]);
+        setBalance(accountsRes.data[0]?.balance ?? 0);
+        setTransactions(TransactionsRes.data.slice(0, 5));
+      } catch (err) {
+        setError('Не удалось загрузить данные');
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  if (loading) {
+    return <div className="dashboard"><p>Загрузка...</p></div>;
+  }
+
+  if (error) {
+    return <div className="dashboard"><p>{error}</p></div>;
+  }
+
+  function formatMoney(amount) {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+    }).format(amount);
+  }
+
+  function formatTransaction(transaction) {
+    if (transaction.type === 'deposit') {
+      return { label: 'Пополнение', sign: '+', color: 'green' };
+    } else if (transaction.type === 'withdrawal') {
+      return { label: 'Снятие', sign: '-', color: 'red' };
+    } else {
+      return { label: 'Перевод', sign: '-', color: 'red' };
+    }
+  }
 
   return (
     <div className="dashboard">
@@ -12,12 +62,18 @@ function DashboardPage() {
 
         <div className="widget">
           <h3>Текущий баланс</h3>
-          <p className="widget-value">124 500 ₽</p>
+          <p className="widget-value">{formatMoney(balance)}</p>
         </div>
 
         <div className="widget">
           <h3>Потрачено за месяц</h3>
-          <p className="widget-value">32 800 ₽</p>
+          <p className="widget-value">
+            {formatMoney(
+              transactions
+                .filter(t => t.type !== 'deposit')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0)
+            )}
+          </p>
         </div>
 
         <div className="widget clickable" onClick={() => navigate("/accounts")}>
@@ -36,33 +92,23 @@ function DashboardPage() {
         <h3>Последние операции</h3>
 
         <div className="history-list">
-          <div className="history-item">
-            <span>Перевод</span>
-            <span>-2 500 ₽</span>
-          </div>
-
-          <div className="history-item">
-            <span>Пополнение</span>
-            <span>+10 000 ₽</span>
-          </div>
-
-          <div className="history-item">
-            <span>Покупка</span>
-            <span>-1 200 ₽</span>
-          </div>
-
-          <div className="history-item">
-            <span>Подписка</span>
-            <span>-399 ₽</span>
-          </div>
-
-          <div className="history-item">
-            <span>Перевод</span>
-            <span>-5 000 ₽</span>
-          </div>
+          {transactions.length === 0 ? (
+            <p>Операций пока нет</p>
+          ) : (
+            transactions.map((transaction) => {
+              const { label, sign, color } = formatTransaction(transaction);
+              return (
+                <div className="history-item" key={transaction.id}>
+                  <span>{label}</span>
+                  <span style={{ color }}>
+                    {sign}{formatMoney(transaction.amount)}
+                  </span>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
-
     </div>
   );
 }
