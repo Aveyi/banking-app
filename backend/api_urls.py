@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from users.views import UserViewSet, RegisterView
+from users.views import UserViewSet, RegisterView, current_user
 from accounts.views import AccountViewSet
 from deposits.views import DepositViewSet
 from transactions.views import TransactionViewSet
@@ -14,4 +14,5 @@ router.register(r'transactions', TransactionViewSet, basename='transactions')
 
 urlpatterns = router.urls + [
     path('register/', RegisterView.as_view(), name='register'),
+    path('users/me', current_user, name='current_user'),
 ]
