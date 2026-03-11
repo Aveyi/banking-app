@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=banking_db
+      - POSTGRES_USER=yaroslav
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+    - 5432:5432
+  
+  backend:
+    build: ../backend
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=banking_db
+      - DB_USER=yaroslav
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=5432
+    ports:
+      - 8000:8000
+    volumes:
+      - ../backend:/app
+    
+  frontend:
+    build: ../frontend
+    depends_on:
+      - backend
+    ports:
+      - 5173:5173
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    
+
+volumes:
+  pgdata:
