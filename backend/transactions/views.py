@@ -8,6 +8,9 @@ from .serializers import TransactionSerializer
 from accounts.models import Account
 from users.models import User
 from decimal import Decimal
+from django.utils import timezone
+import calendar
+from django.db.models import Sum ,Q
 
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
@@ -99,3 +102,68 @@ def make_transfer(request):
         {'message': f'Перевод на сумму {amount} ₽ выполнен успешно'},
         status=status.HTTP_201_CREATED
     )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def analytics_by_week(request):
+    now = timezone.now()
+    user_accounts = request.user.accounts.values_list('id', flat=True)
+
+    first_day = now.replace(day=1, hour=0, minute=0, second=0)
+    last_day = now.replace(day=calendar.monthrange(now.year, now.month)[1], hour=23, minute=59, second=59)
+
+    weeks = [
+        (first_day, first_day.replace(day=7)),
+        (first_day.replace(day=8), first_day.replace(day=14)),
+        (first_day.replace(day=15), first_day.replace(day=21)),
+        (first_day.replace(day=22), last_day),
+    ]
+
+    expenses = []
+    incomes = []
+
+    for start, end in weeks:
+        exp = Transaction.objects.filter(
+            from_account__in=user_accounts,
+            type__in=['withdrawal', 'transfer'],
+            created_at__range=(start, end),
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        inc = Transaction.objects.filter(
+            to_account__in=user_accounts,
+            type__in=['deposit', 'transfer'],
+            created_at__range=(start, end),
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        expenses.append(float(exp))
+        incomes.append(float(inc))
+
+    return Response({
+        'labels': ['1 нед', '2 нед', '3 нед', '4 нед'],
+        'expenses': expenses,
+        'incomes': incomes,
+    })
+
+
+@api_view(['GET'])  # было POST
+@permission_classes([IsAuthenticated])
+def analytics_by_category(request):
+    user_accounts = request.user.accounts.values_list('id', flat=True)
+
+    categories = ['food', 'transport', 'entertainment', 'subscriptions', 'other']
+    labels = ['Еда', 'Транспорт', 'Развлечения', 'Подписки', 'Другое']
+    data = []
+
+    for cat in categories:
+        total = Transaction.objects.filter(
+            from_account__in=user_accounts,
+            type__in=['withdrawal', 'transfer'],
+            category=cat
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        data.append(float(total))
+
+    return Response({
+        'labels': labels,
+        'data': data,
+    })

@@ -60,7 +60,7 @@ function AccountsPage() {
       setAllowTopUp(false);
       setAllowWithdraw(false);
     } catch (err) {
-      setSubmitError("Не удалось открыть вклад");
+      setSubmitError(err.response?.data?.error ?? 'Не удалось открыть вклад');
     } finally {
       setSubmitting(false);
     }

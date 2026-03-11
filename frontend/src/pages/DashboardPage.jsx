@@ -9,16 +9,18 @@ function DashboardPage() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [accountId, setAccountId] = useState(null);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [accountsRes, TransactionsRes] = await Promise.all([
-          api.get('/accounts/'),
-          api.get('/transactions/'),
-        ]);
+        const [accountsRes, transactionsRes] = await Promise.all([
+        api.get('/accounts/'),
+        api.get('/transactions/'),
+      ]);
         setBalance(accountsRes.data[0]?.balance ?? 0);
-        setTransactions(TransactionsRes.data.slice(0, 5));
+        setAccountId(accountsRes.data[0]?.id);
+        setTransactions(transactionsRes.data.slice(0, 5));
       } catch (err) {
         setError('Не удалось загрузить данные');
       } finally {
@@ -44,14 +46,18 @@ function DashboardPage() {
   }
 
   function formatTransaction(transaction) {
-    if (transaction.type === 'deposit') {
-      return { label: 'Пополнение', sign: '+', color: 'green' };
-    } else if (transaction.type === 'withdrawal') {
-      return { label: 'Снятие', sign: '-', color: 'red' };
-    } else {
+  if (transaction.type === 'deposit') {
+    return { label: 'Пополнение', sign: '+', color: 'green' };
+  } else if (transaction.type === 'withdrawal') {
+    return { label: 'Снятие', sign: '-', color: 'red' };
+  } else {
+    if (transaction.from_account === accountId) {
       return { label: 'Перевод', sign: '-', color: 'red' };
+    } else {
+      return { label: 'Входящий перевод', sign: '+', color: 'green' };
     }
   }
+}
 
   return (
     <div className="dashboard">
