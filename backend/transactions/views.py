@@ -146,10 +146,13 @@ def analytics_by_week(request):
     })
 
 
-@api_view(['GET'])  # было POST
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def analytics_by_category(request):
     user_accounts = request.user.accounts.values_list('id', flat=True)
+    
+    now = timezone.now()
+    first_day = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     categories = ['food', 'transport', 'entertainment', 'subscriptions', 'other']
     labels = ['Еда', 'Транспорт', 'Развлечения', 'Подписки', 'Другое']
@@ -159,7 +162,8 @@ def analytics_by_category(request):
         total = Transaction.objects.filter(
             from_account__in=user_accounts,
             type__in=['withdrawal', 'transfer'],
-            category=cat
+            category=cat,
+            created_at__gte=first_day 
         ).aggregate(total=Sum('amount'))['total'] or 0
         data.append(float(total))
 
