@@ -1,0 +1,37 @@
+- name: deploy web app
+  hosts: servers
+  gather_facts: false
+  become: true
+  vars:
+    paths: 
+     - ../backend
+     - ../frontend
+     - ../docker
+  vars_files: secrets.yml
+  tasks:
+  #  - name: install docker
+  #    ansible.builtin.apt:
+  #     name: docker.io
+  #     state: present
+
+   - name: copy app files
+     ansible.builtin.copy:
+      src: '{{ item }}'
+      dest: /mnt/data/app
+     loop: '{{ paths }}'
+
+   - name: copy docker files
+     ansible.builtin.template:
+      src: ../docker/docker-compose.yml
+      dest: /mnt/data/app/docker/docker-compose.yml
+
+   - name: launch app
+     ansible.builtin.shell: docker compose up -d
+     args:
+      chdir: /mnt/data/app/docker
+
+   - name: make migrations (db)
+     ansible.builtin.shell: docker compose exec backend python manage.py migrate
+     args:
+      chdir: /mnt/data/app/docker
+      

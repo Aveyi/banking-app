@@ -49,3 +49,5 @@ backend/.coverage
 backend/htmlcov/
 
 backend/.mypy_cache/
+
+ansible/secrets.yml
