@@ -2,6 +2,7 @@
   hosts: servers
   gather_facts: false
   become: true
+  user: ubuntu
   vars:
     paths: 
      - ../backend
@@ -9,29 +10,66 @@
      - ../docker
   vars_files: secrets.yml
   tasks:
-  #  - name: install docker
-  #    ansible.builtin.apt:
-  #     name: docker.io
-  #     state: present
+  - name: install dependencies
+    ansible.builtin.package:
+      name:
+      - ca-certificates
+      - curl
+      - gnupg
+      state: present
 
-   - name: copy app files
-     ansible.builtin.copy:
+  - name: add docker gpg key
+    ansible.builtin.shell: |
+      install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      chmod a+r /etc/apt/keyrings/docker.asc
+
+  - name: add docker repo
+    ansible.builtin.shell: |
+      echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+      https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo $VERSION_CODENAME) stable" \
+      > /etc/apt/sources.list.d/docker.list
+
+  - name: update apt
+    ansible.builtin.package:
+      update_cache: yes
+
+  - name: install docker
+    ansible.builtin.package:
+      name:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-compose-plugin
+      state: present
+  - name: start docker
+    ansible.builtin.service:
+      name: docker
+      state: started
+      enabled: true
+
+  - name: sync app files
+    ansible.posix.synchronize:
       src: '{{ item }}'
       dest: /mnt/data/app
-     loop: '{{ paths }}'
+      recursive: yes
+      delete: no
+    loop: '{{ paths }}'
 
-   - name: copy docker files
-     ansible.builtin.template:
+  - name: copy docker files
+    ansible.builtin.template:
       src: ../docker/docker-compose.yml
       dest: /mnt/data/app/docker/docker-compose.yml
 
-   - name: launch app
-     ansible.builtin.shell: docker compose up -d
-     args:
+  - name: launch app
+    ansible.builtin.shell: docker compose up -d
+    args:
       chdir: /mnt/data/app/docker
 
-   - name: make migrations (db)
-     ansible.builtin.shell: docker compose exec backend python manage.py migrate
-     args:
+  - name: make migrations (db)
+    ansible.builtin.shell: docker compose exec backend python manage.py migrate
+    args:
       chdir: /mnt/data/app/docker
       

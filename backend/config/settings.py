@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-fmp300iau!@vg+=iylhnv1q738vmfzhum4dwmai5lk##(^7-9b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['176.108.249.253', 'localhost']
+ALLOWED_HOSTS = ['87.242.102.57', 'localhost',]
 AUTH_USER_MODEL = 'users.User'
 CORS_ALLOW_CREDENTIALS = True
 
@@ -79,10 +79,10 @@ TEMPLATES = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    # "http://localhost:3000",
-    # "http://localhost:5173",
-    "http://176.108.249.253:5173",
-    "http://176.108.249.253:3000",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://87.242.102.57:5173",
+    "http://87.242.102.57:3000",
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
