@@ -1,8 +1,7 @@
 - name: deploy web app
-  hosts: servers
   gather_facts: false
+  hosts: all
   become: true
-  user: ubuntu
   vars:
     paths: 
      - ../backend
@@ -53,7 +52,7 @@
   - name: sync app files
     ansible.posix.synchronize:
       src: '{{ item }}'
-      dest: /mnt/data/app
+      dest: /app
       recursive: yes
       delete: no
     loop: '{{ paths }}'
@@ -61,15 +60,15 @@
   - name: copy docker files
     ansible.builtin.template:
       src: ../docker/docker-compose.yml
-      dest: /mnt/data/app/docker/docker-compose.yml
+      dest: /app/docker/docker-compose.yml
 
   - name: launch app
     ansible.builtin.shell: docker compose up -d
     args:
-      chdir: /mnt/data/app/docker
+      chdir: /app/docker
 
   - name: make migrations (db)
     ansible.builtin.shell: docker compose exec backend python manage.py migrate
     args:
-      chdir: /mnt/data/app/docker
+      chdir: /app/docker
       
