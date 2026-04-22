@@ -11,6 +11,16 @@ from decimal import Decimal
 from django.utils import timezone
 import calendar
 from django.db.models import Sum ,Q
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from io import BytesIO
+import os
+
 
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
@@ -171,3 +181,95 @@ def analytics_by_category(request):
         'labels': labels,
         'data': data,
     })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def download_report(request):
+    user = request.user
+    user_accounts = user.accounts.values_list('id', flat=True)
+
+    # Берём транзакции за текущий месяц
+    now = timezone.now()
+    first_day = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    transactions = Transaction.objects.filter(
+        Q(from_account__in=user_accounts) | Q(to_account__in=user_accounts),
+        created_at__gte=first_day
+    ).order_by('-created_at')
+
+    # Считаем итоги
+    total_income = transactions.filter(
+        to_account__in=user_accounts,
+        type__in=['deposit', 'transfer']
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    total_expenses = transactions.filter(
+        from_account__in=user_accounts,
+        type__in=['withdrawal', 'transfer']
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    # Создаём PDF в памяти
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    # Подключаем шрифт с поддержкой кириллицы
+    font_path = os.path.join(os.path.dirname(__file__), 'DejaVuLGCSans.ttf')
+    pdfmetrics.registerFont(TTFont('DejaVu', font_path))
+
+    title_style = styles['Title']
+    title_style.fontName = 'DejaVu'
+
+    normal_style = styles['Normal']
+    normal_style.fontName = 'DejaVu'
+
+    # Заголовок
+    elements.append(Paragraph(f'Финансовый отчёт', title_style))
+    elements.append(Paragraph(f'Клиент: {user.name}', normal_style))
+    elements.append(Paragraph(f'Период: {first_day.strftime("%d.%m.%Y")} — {now.strftime("%d.%m.%Y")}', normal_style))
+    elements.append(Spacer(1, 20))
+
+    # Итоги
+    elements.append(Paragraph(f'Доходы за месяц: {total_income} ₽', normal_style))
+    elements.append(Paragraph(f'Расходы за месяц: {total_expenses} ₽', normal_style))
+    elements.append(Spacer(1, 20))
+
+    # Таблица транзакций
+    elements.append(Paragraph('Операции за месяц:', normal_style))
+    elements.append(Spacer(1, 10))
+
+    # Заголовки таблицы
+    table_data = [['Дата', 'Тип', 'Категория', 'Сумма']]
+
+    type_labels = {'transfer': 'Перевод', 'deposit': 'Пополнение', 'withdrawal': 'Снятие'}
+    category_labels = {'food': 'Еда', 'transport': 'Транспорт', 'entertainment': 'Развлечения', 'subscriptions': 'Подписки', 'other': 'Другое'}
+
+    for t in transactions:
+        table_data.append([
+            t.created_at.strftime('%d.%m.%Y %H:%M'),
+            type_labels.get(t.type, t.type),
+            category_labels.get(t.category, t.category),
+            f'{t.amount} ₽',
+        ])
+
+    if len(table_data) > 1:
+        table = Table(table_data, colWidths=[120, 100, 120, 100])
+        table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, -1), 'DejaVu'),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+        ]))
+        elements.append(table)
+    else:
+        elements.append(Paragraph('Операций за этот месяц нет', normal_style))
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    # Отдаём файл на скачивание
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="report_{now.strftime("%Y_%m")}.pdf"'
+    return response

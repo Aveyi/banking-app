@@ -93,6 +93,26 @@ function AnalyticsPage() {
 
   if (loading) return <div className="dashboard"><p>Загрузка...</p></div>;
   if (error) return <div className="dashboard"><p>{error}</p></div>;
+  async function handleDownloadReport() {
+  try {
+    const res = await api.get('/report/', {
+      responseType: 'blob', // говорим axios что ждём файл, а не JSON
+    });
+
+    // Создаём ссылку для скачивания и кликаем по ней
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'report.pdf');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error('Ошибка при скачивании отчёта');
+  }
+}
 
   return (
     <div className="dashboard">
@@ -123,7 +143,9 @@ function AnalyticsPage() {
       <div className="history-widget">
         <h3>Отчет</h3>
         <p>Скачать финансовый отчет за текущий месяц.</p>
-        <button className="login-btn">Скачать отчет</button>
+        <button className="login-btn" onClick={handleDownloadReport}>
+          Скачать отчет
+        </button>
       </div>
     </div>
   );
