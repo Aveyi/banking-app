@@ -120,13 +120,13 @@ def analytics_by_week(request):
     now = timezone.now()
     user_accounts = request.user.accounts.values_list('id', flat=True)
 
-    first_day = now.replace(day=1, hour=0, minute=0, second=0)
-    last_day = now.replace(day=calendar.monthrange(now.year, now.month)[1], hour=23, minute=59, second=59)
+    first_day = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    last_day = now.replace(day=calendar.monthrange(now.year, now.month)[1], hour=23, minute=59, second=59, microsecond=999999)
 
     weeks = [
-        (first_day, first_day.replace(day=7)),
-        (first_day.replace(day=8), first_day.replace(day=14)),
-        (first_day.replace(day=15), first_day.replace(day=21)),
+        (first_day, first_day.replace(day=7, hour=23, minute=59, second=59, microsecond=999999)),
+        (first_day.replace(day=8), first_day.replace(day=14, hour=23, minute=59, second=59, microsecond=999999)),
+        (first_day.replace(day=15), first_day.replace(day=21, hour=23, minute=59, second=59, microsecond=999999)),
         (first_day.replace(day=22), last_day),
     ]
 
